@@ -45,12 +45,12 @@ const license = `/**
 export default {
     input: 'src/index.js',
     output: {
+        banner: license,
         file: 'bin/push.min.js',
         format: 'umd',
         name: 'Push',
         sourcemap: true
     },
-    banner: license,
     plugins: [
         babel({
             exclude: 'node_modules/**'
