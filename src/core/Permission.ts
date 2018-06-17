@@ -1,10 +1,7 @@
-// @flow
-import type { Global } from 'types';
-
 export default class Permission {
     // Private members
-    _permissions: string[];
-    _win: Global;
+    private permissions: string[];
+    private win: Global;
 
     // Public members
     GRANTED: string;
@@ -12,11 +9,11 @@ export default class Permission {
     DENIED: string;
 
     constructor(win: Global) {
-        this._win = win;
+        this.win = win;
         this.GRANTED = 'granted';
         this.DEFAULT = 'default';
         this.DENIED = 'denied';
-        this._permissions = [this.GRANTED, this.DEFAULT, this.DENIED];
+        this.permissions = [this.GRANTED, this.DEFAULT, this.DENIED];
     }
 
     /**
@@ -27,7 +24,7 @@ export default class Permission {
    */
     request(onGranted: () => void, onDenied: () => void) {
         return arguments.length > 0
-            ? this._requestWithCallback(...arguments)
+            ? this.requestWithCallback(...arguments)
             : this._requestAsPromise();
     }
 
@@ -38,12 +35,12 @@ export default class Permission {
    * @param {Function} onDenied - Function to execute once permission is denied
    * @return {void}
    */
-    _requestWithCallback(onGranted: () => void, onDenied: () => void) {
+    private requestWithCallback(onGranted: () => void, onDenied: () => void) {
         const existing = this.get();
 
-        var resolve = (result = this._win.Notification.permission) => {
-            if (typeof result === 'undefined' && this._win.webkitNotifications)
-                result = this._win.webkitNotifications.checkPermission();
+        const resolve = (result = this.win.Notification.permission) => {
+            if (typeof result === 'undefined' && this.win.webkitNotifications)
+                result = this.win.webkitNotifications.checkPermission();
             if (result === this.GRANTED || result === 0) {
                 if (onGranted) onGranted();
             } else if (onDenied) onDenied();
@@ -53,17 +50,17 @@ export default class Permission {
         if (existing !== this.DEFAULT) {
             resolve(existing);
         } else if (
-            this._win.webkitNotifications &&
-            this._win.webkitNotifications.checkPermission
+            this.win.webkitNotifications &&
+            this.win.webkitNotifications.checkPermission
         ) {
             /* Safari 6+, Legacy webkit browsers */
-            this._win.webkitNotifications.requestPermission(resolve);
+            this.win.webkitNotifications.requestPermission(resolve);
         } else if (
-            this._win.Notification &&
-            this._win.Notification.requestPermission
+            this.win.Notification &&
+            this.win.Notification.requestPermission
         ) {
             /* Chrome 23+ */
-            this._win.Notification
+            this.win.Notification
                 .requestPermission()
                 .then(resolve)
                 .catch(function() {
@@ -89,12 +86,12 @@ export default class Permission {
 
         /* Safari 6+, Chrome 23+ */
         var isModernAPI =
-            this._win.Notification && this._win.Notification.requestPermission;
+            this.win.Notification && this.win.Notification.requestPermission;
 
         /* Legacy webkit browsers */
         var isWebkitAPI =
-            this._win.webkitNotifications &&
-            this._win.webkitNotifications.checkPermission;
+            this.win.webkitNotifications &&
+            this.win.webkitNotifications.checkPermission;
 
         return new Promise((resolvePromise, rejectPromise) => {
             var resolver = result =>
@@ -103,11 +100,11 @@ export default class Permission {
             if (hasPermissions) {
                 resolver(existing);
             } else if (isWebkitAPI) {
-                this._win.webkitNotifications.requestPermission(result => {
+                this.win.webkitNotifications.requestPermission(result => {
                     resolver(result);
                 });
             } else if (isModernAPI) {
-                this._win.Notification
+                this.win.Notification
                     .requestPermission()
                     .then(result => {
                         resolver(result);
@@ -133,22 +130,22 @@ export default class Permission {
         let permission;
 
         /* Safari 6+, Chrome 23+ */
-        if (this._win.Notification && this._win.Notification.permission)
-            permission = this._win.Notification.permission;
+        if (this.win.Notification && this.win.Notification.permission)
+            permission = this.win.Notification.permission;
         else if (
-            this._win.webkitNotifications &&
-            this._win.webkitNotifications.checkPermission
+            this.win.webkitNotifications &&
+            this.win.webkitNotifications.checkPermission
         )
             /* Legacy webkit browsers */
-            permission = this._permissions[
-                this._win.webkitNotifications.checkPermission()
+            permission = this.permissions[
+                this.win.webkitNotifications.checkPermission()
             ];
         else if (navigator.mozNotification)
             /* Firefox Mobile */
             permission = this.GRANTED;
-        else if (this._win.external && this._win.external.msIsSiteMode)
+        else if (this.win.external && this.win.external.msIsSiteMode)
             /* IE9+ */
-            permission = this._win.external.msIsSiteMode()
+            permission = this.win.external.msIsSiteMode()
                 ? this.GRANTED
                 : this.DEFAULT;
         else permission = this.GRANTED;

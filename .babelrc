@@ -6,7 +6,9 @@
           "modules": false
         }
       ],
-      "@babel/preset-stage-2"
-  ],
-  "plugins": ["@babel/plugin-transform-flow-strip-types"]
+      ["@babel/preset-stage-2", {
+          "decoratorsLegacy": true
+      }],
+      "@babel/preset-typescript"
+  ]
 }

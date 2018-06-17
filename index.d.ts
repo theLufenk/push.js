@@ -1,5 +1,4 @@
 declare module 'push.js' {
-
     export default new Push();
 
     class Push {
@@ -11,7 +10,7 @@ declare module 'push.js' {
 
         clear(): void;
 
-        config(params: PushParams)
+        config(params: PushParams): void;
     }
 
     export interface PushNotificationParams {

@@ -3,7 +3,8 @@ import resolve from 'rollup-plugin-node-resolve';
 import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
 import alias from 'rollup-plugin-alias';
-import uglify from 'rollup-plugin-uglify';
+
+import { uglify } from 'rollup-plugin-uglify';
 import { minify } from 'uglify-es';
 
 const license = `/**
@@ -43,7 +44,7 @@ const license = `/**
  */`;
 
 export default {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     output: {
         file: 'bin/push.min.js',
         format: 'umd',
@@ -56,9 +57,9 @@ export default {
             exclude: 'node_modules/**'
         }),
         alias({
-            types: path.resolve(__dirname, 'src/types'),
-            push: path.resolve(__dirname, 'src/push/index'),
-            agents: path.resolve(__dirname, 'src/agents/index')
+            resolve: ['.ts'],
+            '@push/core': path.resolve(__dirname, 'src/core/index'),
+            '@push/agents': path.resolve(__dirname, 'src/agents/index')
         }),
         commonjs(),
         resolve(),
