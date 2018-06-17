@@ -43,34 +43,40 @@ const license = `/**
  * THE SOFTWARE.
  */`;
 
+const fileFormats = ['.js', '.ts'];
+const modules = {
+  '@push/core': path.resolve(__dirname, 'src/core/index'),
+  '@push/agents': path.resolve(__dirname, 'src/agents/index')
+};
+
 export default {
-    input: 'src/index.ts',
-    output: {
-        file: 'bin/push.min.js',
-        format: 'umd',
-        name: 'Push',
-        sourcemap: true
-    },
-    banner: license,
-    plugins: [
-        babel({
-            exclude: 'node_modules/**'
-        }),
-        alias({
-            resolve: ['.ts'],
-            '@push/core': path.resolve(__dirname, 'src/core/index'),
-            '@push/agents': path.resolve(__dirname, 'src/agents/index')
-        }),
-        commonjs(),
-        resolve(),
-        uglify(
-            {
-                output: {
-                    beautify: false,
-                    preamble: license
-                }
-            },
-            minify
-        )
-    ]
+  input: 'src/index.ts',
+  output: {
+    file: 'bin/push.min.js',
+    format: 'umd',
+    name: 'Push',
+    sourcemap: true
+  },
+  banner: license,
+  plugins: [
+    babel({
+      exclude: 'node_modules/**'
+    }),
+    resolve({ extensions: fileFormats }),
+    alias({
+      ...modules,
+      resolve: fileFormats
+    }),
+    commonjs(),
+    resolve(),
+    uglify(
+      {
+        output: {
+          beautify: false,
+          preamble: license
+        }
+      },
+      minify
+    )
+  ]
 };
