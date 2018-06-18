@@ -1,12 +1,12 @@
 export default class Permission {
   // Private members
-  private permissions: string[];
+  private permissions: NotificationPermission[];
   private win: Global;
 
   // Public members
-  GRANTED: string;
-  DEFAULT: string;
-  DENIED: string;
+  GRANTED: 'granted';
+  DEFAULT: 'default';
+  DENIED: 'denied';
 
   constructor(win: Global) {
     this.win = win;
@@ -41,7 +41,7 @@ export default class Permission {
     const resolve = (result = this.win.Notification.permission) => {
       if (typeof result === 'undefined' && this.win.webkitNotifications)
         result = this.win.webkitNotifications.checkPermission();
-      if (result === this.GRANTED || result === this.GRANTED) {
+      if (result === this.GRANTED || result === 0) {
         if (onGranted) onGranted();
       } else if (onDenied) onDenied();
     };
@@ -78,33 +78,36 @@ export default class Permission {
   _requestAsPromise(): Promise<void> {
     const existing = this.get();
 
-    let isGranted = result => result === this.GRANTED || result === 0;
+    let isGranted = (result: NotificationPermission) =>
+      result === this.GRANTED || result === 0;
 
     /* Permissions already set */
-    var hasPermissions = existing !== this.DEFAULT;
+    const hasPermissions = existing !== this.DEFAULT;
 
     /* Safari 6+, Chrome 23+ */
-    var isModernAPI =
+    const isModernAPI =
       this.win.Notification && this.win.Notification.requestPermission;
 
     /* Legacy webkit browsers */
-    var isWebkitAPI =
+    const isWebkitAPI =
       this.win.webkitNotifications &&
       this.win.webkitNotifications.checkPermission;
 
-    return new Promise((resolvePromise, rejectPromise) => {
-      var resolver = result =>
+    return new Promise((resolvePromise: Function, rejectPromise: Function) => {
+      const resolver = (result: NotificationPermission) =>
         isGranted(result) ? resolvePromise() : rejectPromise();
 
       if (hasPermissions) {
         resolver(existing);
       } else if (isWebkitAPI) {
-        this.win.webkitNotifications.requestPermission(result => {
-          resolver(result);
-        });
+        this.win.webkitNotifications.requestPermission(
+          (result: NotificationPermission) => {
+            resolver(result);
+          }
+        );
       } else if (isModernAPI) {
         this.win.Notification.requestPermission()
-          .then(result => {
+          .then((result: NotificationPermission) => {
             resolver(result);
           })
           .catch(rejectPromise);
@@ -125,7 +128,7 @@ export default class Permission {
    * @return {Permission} The permission level
    */
   get(): NotificationPermission {
-    let permission;
+    let permission: NotificationPermission;
 
     /* Safari 6+, Chrome 23+ */
     if (this.win.Notification && this.win.Notification.permission)

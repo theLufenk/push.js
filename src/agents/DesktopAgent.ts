@@ -21,15 +21,17 @@ export default class DesktopAgent extends AbstractAgent {
    * @returns {Notification}
    */
   create(title: string, options: PushOptions) {
-    return new this.win.Notification(title, {
-      icon:
-        Util.isString(options.icon) || Util.isUndefined(options.icon)
-          ? options.icon
-          : options.icon.x32,
-      body: options.body,
-      tag: options.tag,
-      requireInteraction: options.requireInteraction
-    });
+      if (this.win.Notification) {
+          return new this.win.Notification(title, {
+              icon:
+                  Util.isString(options.icon) || Util.isUndefined(options.icon)
+                      ? options.icon
+                      : options.icon.x32,
+              body: options.body,
+              tag: options.tag,
+              requireInteraction: options.requireInteraction
+          });
+      }
   }
 
   /**
