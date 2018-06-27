@@ -20,9 +20,10 @@ export default class DesktopAgent extends AbstractAgent {
    * @param options - notification options array
    * @returns {Notification}
    */
-  create(title: string, options: PushOptions) {
+  create(title: string, options: PushOptions): Notification | null {
       if (this.win.Notification) {
-          return new this.win.Notification(title, {
+          const notificationClass: any = this.win.Notification;
+          return new notificationClass(title, {
               icon:
                   Util.isString(options.icon) || Util.isUndefined(options.icon)
                       ? options.icon
@@ -32,6 +33,8 @@ export default class DesktopAgent extends AbstractAgent {
               requireInteraction: options.requireInteraction
           });
       }
+
+      return null;
   }
 
   /**
