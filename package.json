@@ -24,7 +24,7 @@
     },
     "homepage": "https://github.com/Nickersoft/push.js",
     "devDependencies": {
-        "@babel/core": "^7.0.0-beta.35",
+        "@babel/core": "^7.0.1",
         "@babel/plugin-transform-flow-strip-types": "^7.0.0-beta.35",
         "@babel/plugin-transform-strict-mode": "^7.0.0-beta.35",
         "@babel/polyfill": "^7.0.0-beta.35",
